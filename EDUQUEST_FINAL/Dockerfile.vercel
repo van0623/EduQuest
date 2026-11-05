@@ -1,0 +1,17 @@
+
+FROM dunglas/frankenphp:1-php8.4-alpine
+
+WORKDIR /app
+
+# Install PHP MySQLi extension
+RUN install-php-extensions mysqli
+
+# Copy the EduQuest application
+COPY . /app
+
+# Configure the web server
+COPY Caddyfile /etc/caddy/Caddyfile
+
+ENV PORT=80
+
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
