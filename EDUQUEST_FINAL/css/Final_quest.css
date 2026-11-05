@@ -1,0 +1,1041 @@
+
+:root {
+    --primary: #5DD62C;
+    --primary-dark: #05813b;
+    --primary-light: #e9f2eb;
+    --accent: #91b99a;
+
+    --bg: #f4f7f4;
+    --surface: #ffffff;
+    --surface-soft: #f8faf8;
+
+    --text: #202b24;
+    --text-secondary: #68756c;
+    --text-muted: #89948c;
+
+    --border: #e4eae5;
+    --border-strong: #d5dfd7;
+
+    --success: #27834d;
+    --success-bg: #eaf6ee;
+
+    --danger: #c84b4b;
+    --danger-bg: #fff0ef;
+
+    --shadow:
+        0 8px 28px rgba(35, 69, 50, 0.055);
+
+    --radius: 16px;
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.page-container {
+    min-height: 100vh;
+}
+
+.learning-container {
+    width: min(1120px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 34px 0 70px;
+}
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+    min-height: 76px;
+    padding: 0 5.5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.welcome h2 {
+    color: var(--primary);
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+
+.notification {
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.dark-mode-btn {
+    width: 39px;
+    height: 39px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    border-radius: 11px;
+    font-size: 17px;
+    transition: 0.2s ease;
+}
+
+.notification:hover,
+.dark-mode-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--accent);
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 15px;
+    border-left: 1px solid var(--border);
+}
+
+.profile-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* =========================================================
+   BACK LINK AND PAGE HEADER
+========================================================= */
+
+.learning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.back-link {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: var(--primary);
+}
+
+.mission-number {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1px solid #d7e8da;
+    padding: 7px 14px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+}
+
+/* =========================================================
+   QUEST WRAPPER
+========================================================= */
+
+.quest-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* =========================================================
+   QUEST INTRO
+========================================================= */
+
+.quest-intro {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 34px 38px;
+    background: linear-gradient(
+        120deg,
+        #203e2d,
+        #315c43 65%,
+        #416e50
+    );
+    border-radius: 20px;
+    color: #ffffff;
+    box-shadow: 0 12px 30px rgba(35, 69, 50, 0.13);
+}
+
+.quest-intro::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    right: 100px;
+    top: -160px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 30px rgba(255, 255, 255, 0.035),
+        0 0 0 60px rgba(255, 255, 255, 0.025);
+    pointer-events: none;
+}
+
+.quest-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #c7e1ca;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    margin-bottom: 12px;
+}
+
+.quest-eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    background: #a7d6a9;
+    border-radius: 50%;
+}
+
+.quest-heading {
+    color: #ffffff;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 750;
+    letter-spacing: -1px;
+    line-height: 1.25;
+    margin-bottom: 8px;
+}
+
+.quest-description {
+    color: #d3e3d6;
+    font-size: 14px;
+}
+
+.quest-level {
+    min-width: 105px;
+    padding: 16px;
+    text-align: center;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    position: relative;
+    z-index: 1;
+}
+
+.quest-level span {
+    display: block;
+    color: #c7dfcc;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    margin-bottom: 4px;
+}
+
+.quest-level strong {
+    display: block;
+    color: #ffffff;
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+/* =========================================================
+   QUEST META
+========================================================= */
+
+.quest-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 20px;
+}
+
+.quest-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    color: #f0f7f0;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   QUEST PANEL
+========================================================= */
+
+.quest-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.quest-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 19px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.quest-panel-label {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+}
+
+.quest-question-count {
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 6px 11px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* =========================================================
+   QUESTION CARD
+========================================================= */
+
+.quest-question {
+    padding: 27px 0 30px;
+    border-bottom: 1px solid var(--border);
+}
+
+.quest-question:last-of-type {
+    border-bottom: none;
+}
+
+.fq-question-top {
+    margin-bottom: 12px;
+}
+
+.quest-question-number {
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+}
+
+.quest-question h2 {
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.55;
+    margin-bottom: 8px;
+}
+
+.quest-question-help {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 19px;
+}
+
+/* =========================================================
+   ANSWER OPTIONS
+========================================================= */
+
+.quest-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px;
+}
+
+.quest-option {
+    min-height: 62px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.quest-option:hover {
+    border-color: var(--accent);
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.quest-option:has(input:checked) {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(49, 92, 67, 0.08);
+}
+
+.quest-option input {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.quest-option-letter {
+    width: 27px;
+    height: 27px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #edf1ed;
+    color: #526456;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.quest-option:has(input:checked) .quest-option-letter {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.quest-option-text {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.quest-navigation {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 25px;
+    margin-top: 5px;
+    border-top: 1px solid var(--border);
+}
+
+.quest-btn {
+    min-height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 21px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.quest-btn-submit,
+.primary-btn {
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(49, 92, 67, 0.13);
+}
+
+.quest-btn-submit:hover,
+.primary-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(49, 92, 67, 0.18);
+}
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+.quest-error {
+    padding: 14px 17px;
+    background: var(--danger-bg);
+    border: 1px solid #f1ceca;
+    border-left: 4px solid var(--danger);
+    border-radius: 9px;
+    color: #a33d3d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.quest-empty {
+    max-width: 650px;
+    margin: 55px auto;
+    text-align: center;
+    padding: 48px 30px;
+}
+
+.quest-empty-icon {
+    width: 75px;
+    height: 75px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 20px;
+    background: var(--primary-light);
+    border-radius: 22px;
+    font-size: 32px;
+}
+
+.quest-empty h1 {
+    color: var(--text);
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.lesson-intro {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 23px;
+}
+
+.quest-result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 11px;
+    margin-top: 22px;
+}
+
+.primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 19px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+/* =========================================================
+   RESULT PANEL
+========================================================= */
+
+.quest-result {
+    padding: 32px 25px;
+    text-align: center;
+    border-radius: 14px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+}
+
+.quest-result.passed {
+    background: var(--success-bg);
+    border-color: #cde8d5;
+}
+
+.quest-result.failed {
+    background: var(--danger-bg);
+    border-color: #f0d2cf;
+}
+
+.quest-result-icon {
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: #ffffff;
+    font-size: 34px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.quest-result h2 {
+    color: var(--text);
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.quest-result > p {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.quest-result-score {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 620px;
+    margin: 27px auto;
+    padding: 20px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.quest-result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+}
+
+.quest-result-stat + .quest-result-stat {
+    border-left: 1px solid var(--border);
+}
+
+.quest-result-stat strong {
+    color: var(--primary);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.quest-result-stat span {
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+}
+
+.quest-btn-secondary {
+    color: var(--primary);
+    background: var(--surface);
+    border-color: var(--border-strong);
+}
+
+.quest-btn-secondary:hover {
+    background: var(--primary-light);
+    border-color: var(--accent);
+}
+
+/* =========================================================
+   ANSWER REVIEW
+========================================================= */
+
+.quest-review {
+    margin-top: 38px;
+    text-align: left;
+}
+
+.quest-review h3 {
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 17px;
+}
+
+.quest-review-item {
+    margin-bottom: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.quest-review-item.ok {
+    border-left: 4px solid var(--success);
+}
+
+.quest-review-item.bad {
+    border-left: 4px solid var(--danger);
+}
+
+.quest-review-item summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.quest-review-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.quest-review-item summary::after {
+    content: "+";
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.quest-review-item[open] summary::after {
+    content: "−";
+}
+
+.quest-review-badge {
+    width: 25px;
+    height: 25px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--success-bg);
+    color: var(--success);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.quest-review-item.bad .quest-review-badge {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.quest-review-q {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.5;
+}
+
+.quest-review-body {
+    padding: 0 16px 16px 52px;
+}
+
+.quest-review-body p {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-bottom: 7px;
+    overflow-wrap: anywhere;
+}
+
+.quest-review-body strong {
+    color: var(--text);
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+body.dark-mode-active {
+    --bg: #151b17;
+    --surface: #1e2821;
+    --surface-soft: #253128;
+
+    --text: #edf3ee;
+    --text-secondary: #b0beb3;
+    --text-muted: #899b8d;
+
+    --border: #354339;
+    --border-strong: #45564a;
+
+    --primary-light: #2b4031;
+
+    --success-bg: #203d2b;
+    --danger-bg: #422827;
+
+    --shadow:
+        0 8px 28px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode-active .topbar {
+    background: #1b241e;
+}
+
+body.dark-mode-active .quest-intro {
+    background: linear-gradient(
+        120deg,
+        #1c3527,
+        #294b35 65%,
+        #345a40
+    );
+}
+
+body.dark-mode-active .quest-option {
+    background: #253128;
+    border-color: #3a4a3e;
+}
+
+body.dark-mode-active .quest-option:hover,
+body.dark-mode-active .quest-option:has(input:checked) {
+    background: #2b4031;
+    border-color: #79a887;
+}
+
+body.dark-mode-active .quest-option-letter {
+    background: #34463a;
+    color: #dce9df;
+}
+
+body.dark-mode-active .quest-result.passed {
+    background: #203d2b;
+    border-color: #365d42;
+}
+
+body.dark-mode-active .quest-result.failed {
+    background: #422827;
+    border-color: #68403d;
+}
+
+body.dark-mode-active .quest-result-icon {
+    background: #2b382e;
+}
+
+body.dark-mode-active .quest-result-score {
+    background: #1e2821;
+    border-color: #354339;
+}
+
+body.dark-mode-active .quest-review-item {
+    background: #202b23;
+}
+
+body.dark-mode-active .quest-btn-secondary {
+    background: #253128;
+    border-color: #45564a;
+    color: #c9e2ce;
+}
+
+body.dark-mode-active .notification,
+body.dark-mode-active .dark-mode-btn {
+    background: #253128;
+    border-color: #354339;
+    color: #edf3ee;
+}
+
+body.dark-mode-active .notification:hover,
+body.dark-mode-active .dark-mode-btn:hover {
+    background: #2b4031;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .topbar {
+        padding: 0 22px;
+        min-height: 68px;
+    }
+
+    .learning-container {
+        width: min(100% - 30px, 650px);
+        padding-top: 24px;
+    }
+
+    .quest-intro {
+        padding: 27px 24px;
+        border-radius: 15px;
+    }
+
+    .quest-heading {
+        font-size: 25px;
+    }
+
+    .quest-panel {
+        padding: 23px 19px;
+    }
+
+    .quest-options {
+        grid-template-columns: 1fr;
+    }
+
+    .quest-result {
+        padding: 27px 16px;
+    }
+}
+
+@media (max-width: 520px) {
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .welcome h2 {
+        font-size: 19px;
+    }
+
+    .profile {
+        gap: 9px;
+    }
+
+    .profile-info {
+        padding-left: 9px;
+    }
+
+    .profile-name {
+        max-width: 95px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 11px;
+    }
+
+    .notification,
+    .dark-mode-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .learning-container {
+        width: calc(100% - 24px);
+        padding-top: 20px;
+    }
+
+    .learning-header {
+        margin-bottom: 17px;
+    }
+
+    .quest-intro {
+        align-items: flex-start;
+        padding: 23px 19px;
+        gap: 12px;
+    }
+
+    .quest-heading {
+        font-size: 22px;
+    }
+
+    .quest-description {
+        font-size: 12px;
+    }
+
+    .quest-level {
+        min-width: 68px;
+        padding: 10px 8px;
+    }
+
+    .quest-level strong {
+        font-size: 21px;
+    }
+
+    .quest-meta {
+        gap: 6px;
+    }
+
+    .quest-chip {
+        padding: 6px 8px;
+        font-size: 9px;
+    }
+
+    .quest-panel {
+        padding: 19px 14px;
+    }
+
+    .quest-panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .quest-question {
+        padding: 23px 0;
+    }
+
+    .quest-question h2 {
+        font-size: 15px;
+    }
+
+    .quest-option {
+        min-height: 57px;
+        padding: 11px;
+    }
+
+    .quest-option-text {
+        font-size: 12px;
+    }
+
+    .quest-navigation {
+        justify-content: stretch;
+    }
+
+    .quest-btn-submit {
+        width: 100%;
+    }
+
+    .quest-result h2 {
+        font-size: 21px;
+    }
+
+    .quest-result-score {
+        padding: 15px 5px;
+    }
+
+    .quest-result-stat {
+        padding: 4px;
+    }
+
+    .quest-result-stat strong {
+        font-size: 19px;
+    }
+
+    .quest-result-stat span {
+        font-size: 8px;
+    }
+
+    .quest-result-actions {
+        flex-direction: column;
+    }
+
+    .quest-result-actions a {
+        width: 100%;
+    }
+
+    .quest-review-body {
+        padding-left: 15px;
+    }
+}

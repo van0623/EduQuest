@@ -1,0 +1,615 @@
+/* ================================= */
+/* LEARNING PAGES */
+/* ================================= */
+
+.page-container {
+    width: auto;
+    min-height: auto;
+    background-color: #F8F8F8;
+}
+
+
+/* TOPBAR */
+
+.topbar {
+    width: auto;
+    min-height: 80px;
+    padding: 0 5%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #202020;
+    color: white;
+}
+
+.welcome h2 {
+    color: #5DD62C;
+    font-size: 24px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification {
+    font-size: 19px;
+}
+
+.dark-mode-btn {
+    border: none;
+    background: none;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.profile-name {
+    font-size: 15px;
+}
+
+
+/* MAIN */
+
+.learning-container {
+    width: 80%;
+    max-width: 1300px;
+    margin: 40px auto;
+}
+
+.learning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.back-link {
+    color: #337418;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mission-number {
+    color: #555;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* PROGRESS */
+
+.progress-section {
+    margin-bottom: 30px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #dddddd;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #5DD62C;
+    border-radius: 20px;
+}
+
+
+/* GENERAL CARD */
+
+.learning-card,
+.completion-card,
+.result-card,
+.course-complete-card {
+    width: 100%;
+    background-color: white(244, 247, 245);
+    border-radius: 18px;
+    padding: 50px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+}
+
+.section-label {
+    display: inline-block;
+    margin-bottom: 12px;
+
+    color: #337418;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.learning-card h1,
+.completion-card h1,
+.result-card h1,
+.course-complete-card h1 {
+    color: #202020;
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.lesson-intro {
+    color: #666;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 35px;
+}
+
+
+/* LESSON */
+
+.lesson-section {
+    margin-bottom: 30px;
+}
+
+.lesson-section h2 {
+    color: #202020;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.lesson-section p {
+    color: #555;
+    line-height: 1.7;
+}
+
+.example-box {
+    margin-top: 15px;
+    padding: 20px;
+
+    background-color: #F8F8F8;
+    border-left: 4px solid #5DD62C;
+    border-radius: 8px;
+}
+
+.example-box p {
+    margin-top: 8px;
+}
+
+
+/* QUESTIONS */
+
+.question-box {
+    padding: 25px;
+    margin-bottom: 25px;
+
+    background-color: #F8F8F8;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+}
+
+.question-number {
+    display: block;
+    margin-bottom: 12px;
+
+    color: #337418;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.question-box h3 {
+    color: #202020;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.answer-option {
+    display: block;
+
+    padding: 14px;
+    margin-bottom: 10px;
+
+    background-color: white;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.answer-option:hover {
+    border-color: #5DD62C;
+}
+
+.answer-option input {
+    margin-right: 10px;
+}
+
+
+/* CHALLENGE */
+
+.challenge-instructions,
+.challenge-requirements {
+    margin-bottom: 30px;
+}
+
+.challenge-instructions h2,
+.challenge-requirements h2 {
+    margin-bottom: 12px;
+}
+
+.challenge-instructions p {
+    color: #555;
+    line-height: 1.7;
+}
+
+.challenge-requirements ul {
+    padding-left: 25px;
+    color: #555;
+    line-height: 2;
+}
+
+.answer-area {
+    margin-top: 30px;
+}
+
+.answer-area label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.answer-area textarea {
+    width: 100%;
+    min-height: 180px;
+
+    padding: 15px;
+
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+
+    resize: vertical;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+
+/* BUTTONS */
+
+.learning-actions,
+.completion-actions,
+.result-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.primary-btn,
+.secondary-btn {
+    display: inline-block;
+
+    padding: 14px 25px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.primary-btn {
+    background-color: #5DD62C;
+    color: #0F0F0F;
+}
+
+.primary-btn:hover {
+    background-color: #337418;
+    color: white;
+}
+
+.secondary-btn {
+    background-color: #202020;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background-color: #0F0F0F;
+}
+
+
+/* COMPLETION */
+
+.completion-card,
+.result-card,
+.course-complete-card {
+    text-align: center;
+}
+
+.completion-icon,
+.result-icon,
+.course-complete-icon {
+    width: 85px;
+    height: 85px;
+
+    margin: 0 auto 25px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #5DD62C;
+    color: #0F0F0F;
+
+    border-radius: 50%;
+
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.completion-card > p,
+.result-message,
+.course-complete-message {
+    color: #555;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+
+/* UNLOCK BOX */
+
+.unlock-box,
+.result-status,
+.achievement-unlock {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    max-width: 600px;
+
+    margin: 35px auto;
+
+    padding: 20px;
+
+    background-color: #F8F8F8;
+    border-radius: 12px;
+
+    text-align: left;
+}
+
+.unlock-icon,
+.status-icon,
+.achievement-icon {
+    font-size: 30px;
+}
+
+.unlock-box h3,
+.result-status h3,
+.achievement-unlock h3 {
+    margin-bottom: 5px;
+}
+
+.unlock-box p,
+.result-status p,
+.achievement-unlock p {
+    margin: 0;
+    color: #666;
+}
+
+
+/* FINAL QUEST INFO */
+
+.final-quest-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    margin-bottom: 35px;
+}
+
+.info-item {
+    padding: 20px;
+
+    background-color: #F8F8F8;
+    border-radius: 12px;
+
+    text-align: center;
+}
+
+.info-item strong,
+.info-item span {
+    display: block;
+}
+
+.info-item strong {
+    color: #202020;
+    margin-bottom: 8px;
+}
+
+.info-item span {
+    color: #337418;
+    font-weight: bold;
+}
+
+
+/* RESULT */
+
+.score-box {
+    max-width: 400px;
+
+    margin: 35px auto;
+    padding: 30px;
+
+    background-color: #F8F8F8;
+    border-radius: 15px;
+}
+
+.score-box span {
+    display: block;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.score-box strong {
+    display: block;
+
+    color: #337418;
+    font-size: 48px;
+
+    margin-bottom: 5px;
+}
+
+.score-box p {
+    color: #555;
+}
+
+
+/* COURSE COMPLETE */
+
+.course-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    max-width: 800px;
+
+    margin: 35px auto;
+}
+
+.summary-item {
+    padding: 25px;
+
+    background-color: #F8F8F8;
+    border-radius: 12px;
+}
+
+.summary-item strong {
+    display: block;
+
+    color: #337418;
+    font-size: 32px;
+
+    margin-bottom: 8px;
+}
+
+.summary-item span {
+    color: #555;
+}
+
+
+/* CENTER BUTTONS */
+
+.completion-actions,
+.result-actions {
+    justify-content: center;
+}
+
+
+/* DARK MODE */
+
+.dark-mode-active .page-container {
+    background-color: #0F0F0F;
+}
+
+.dark-mode-active .learning-card,
+.dark-mode-active .completion-card,
+.dark-mode-active .result-card,
+.dark-mode-active .course-complete-card {
+    background-color: #202020;
+}
+
+.dark-mode-active .learning-card h1,
+.dark-mode-active .completion-card h1,
+.dark-mode-active .result-card h1,
+.dark-mode-active .course-complete-card h1,
+.dark-mode-active .lesson-section h2,
+.dark-mode-active .challenge-instructions h2,
+.dark-mode-active .challenge-requirements h2 {
+    color: white;
+}
+
+.dark-mode-active .lesson-intro,
+.dark-mode-active .lesson-section p,
+.dark-mode-active .challenge-instructions p,
+.dark-mode-active .challenge-requirements li,
+.dark-mode-active .completion-card > p,
+.dark-mode-active .result-message,
+.dark-mode-active .course-complete-message {
+    color: #cccccc;
+}
+
+.dark-mode-active .question-box,
+.dark-mode-active .example-box,
+.dark-mode-active .unlock-box,
+.dark-mode-active .result-status,
+.dark-mode-active .achievement-unlock,
+.dark-mode-active .info-item,
+.dark-mode-active .score-box,
+.dark-mode-active .summary-item {
+    background-color: #0F0F0F;
+    border-color: #333333;
+}
+
+.dark-mode-active .question-box h3,
+.dark-mode-active .info-item strong {
+    color: white;
+}
+
+.dark-mode-active .answer-option {
+    background-color: #202020;
+    border-color: #444;
+    color: white;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .topbar {
+        padding: 0 20px;
+    }
+
+    .learning-container {
+        width: 94%;
+        margin: 25px auto;
+    }
+
+    .learning-card,
+    .completion-card,
+    .result-card,
+    .course-complete-card {
+        padding: 30px 20px;
+    }
+
+    .learning-card h1,
+    .completion-card h1,
+    .result-card h1,
+    .course-complete-card h1 {
+        font-size: 28px;
+    }
+
+    .final-quest-info,
+    .course-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .learning-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .learning-actions,
+    .completion-actions,
+    .result-actions {
+        flex-direction: column;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,420 @@
+/* ---------- HUD: fits 4 or 5 tiles ---------- */
+
+.quest-hud {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+/* ---------- Rocket progress ---------- */
+
+.quest-track-wrap {
+    position: relative;
+    padding-top: 6px;
+}
+
+.quest-rocket {
+    position: absolute;
+    top: -14px;
+    left: 0;
+    font-size: 20px;
+    line-height: 1;
+    pointer-events: none;
+    transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- Mascot ---------- */
+
+.quest-mascot {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.quest-mascot-face {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: #EAF9E3;
+    font-size: 28px;
+}
+
+.quest-mascot-face.bounce {
+    animation: questBounce 0.6s ease;
+}
+
+.quest-mascot-bubble {
+    position: relative;
+    max-width: 580px;
+    padding: 11px 15px;
+    border-radius: 14px;
+    background: #F4F4F4;
+    font-size: 13.5px;
+    font-weight: 650;
+    line-height: 1.5;
+}
+
+.quest-mascot-bubble::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    background: inherit;
+    transform: translateY(-50%) rotate(45deg);
+}
+
+@keyframes questBounce {
+    0% {
+        transform: scale(1) rotate(0);
+    }
+    30% {
+        transform: scale(1.25) rotate(-8deg);
+    }
+    60% {
+        transform: scale(0.95) rotate(6deg);
+    }
+    100% {
+        transform: scale(1) rotate(0);
+    }
+}
+
+/* ---------- Hints ---------- */
+
+.quest-btn-hint {
+    background: #FFF0D6;
+    color: #9A4A00;
+}
+
+.quest-btn-hint:hover:not(:disabled) {
+    background: #FFE2B0;
+}
+
+.quest-hintbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 16px;
+    padding: 13px 15px;
+    border: 1.5px dashed #FF9F1C;
+    border-radius: 14px;
+    background: #FFF8EC;
+    color: #7A4300;
+    font-size: 13.5px;
+    line-height: 1.6;
+    animation: questAppear 0.3s ease;
+}
+
+.quest-hintbox[hidden] {
+    display: none;
+}
+
+.quest-hintbox-icon {
+    font-size: 20px;
+    line-height: 1.2;
+}
+
+.quest-hint-pattern {
+    display: block;
+    margin-top: 4px;
+    font-family: ui-monospace, Consolas, "Courier New", monospace;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.quest-hint-note {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.quest-option.is-eliminated,
+.fb-chip.is-eliminated {
+    opacity: 0.35;
+    text-decoration: line-through;
+    filter: grayscale(1);
+    pointer-events: none;
+}
+
+.ord-item.is-pinned {
+    border-color: #FF9F1C;
+    box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.2);
+}
+
+.ord-item.is-pinned::after {
+    content: "📌";
+}
+
+.match-item.is-hinted {
+    box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.3);
+}
+
+/* ---------- Correct-answer pulse ---------- */
+
+.quest-option.is-correct {
+    animation: questPulseGreen 0.7s ease;
+}
+
+@keyframes questPulseGreen {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.03);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ---------- Toasts ---------- */
+
+.quest-toast-wrap {
+    position: fixed;
+    top: 84px;
+    right: 18px;
+    z-index: 1100;
+    display: grid;
+    gap: 10px;
+    width: min(320px, calc(100vw - 36px));
+    pointer-events: none;
+}
+
+.quest-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    border-radius: 16px;
+    background: #0F0F0F;
+    color: #FFFFFF;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+    animation: questToastIn 0.35s ease, questToastOut 0.35s ease 2.9s forwards;
+}
+
+.quest-toast-icon {
+    font-size: 26px;
+    line-height: 1;
+}
+
+.quest-toast strong {
+    display: block;
+    font-size: 14px;
+}
+
+.quest-toast small {
+    display: block;
+    margin-top: 2px;
+    color: #C9C9C9;
+    font-size: 12px;
+}
+
+@keyframes questToastIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes questToastOut {
+    to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+}
+
+/* ---------- Emoji burst ---------- */
+
+.quest-burst {
+    position: fixed;
+    z-index: 1200;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.quest-burst span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 20px;
+    animation: questBurst 0.85s ease-out forwards;
+}
+
+@keyframes questBurst {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.6);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(var(--rot));
+    }
+}
+
+/* ---------- Result extras ---------- */
+
+.quest-rank {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 12px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #FFF2C9;
+    color: #7A5200;
+    font-size: 13px;
+    font-weight: 850;
+    letter-spacing: 0.4px;
+}
+
+.quest-result-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0 16px;
+}
+
+.quest-best {
+    margin: 0 0 6px;
+    font-weight: 750;
+}
+
+.quest-badges-wrap {
+    margin-top: 30px;
+}
+
+.quest-badges-title {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+.quest-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 10px;
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.quest-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid #FFD98A;
+    border-radius: 14px;
+    background: #FFF9E8;
+    animation: questBadgeIn 0.5s ease both;
+    animation-delay: calc(var(--i, 0) * 0.15s + 0.6s);
+}
+
+.quest-badge-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.quest-badge strong {
+    display: block;
+    font-size: 14px;
+}
+
+.quest-badge small {
+    color: var(--game-muted);
+    font-size: 12px;
+}
+
+@keyframes questBadgeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- Dark mode ---------- */
+
+body.dark-mode-active .quest-mascot-face {
+    background: #1F3A18;
+}
+
+body.dark-mode-active .quest-mascot-bubble {
+    background: #2A2A2A;
+    color: #F8F8F8;
+}
+
+body.dark-mode-active .quest-btn-hint {
+    background: #3A2A12;
+    color: #FFC26B;
+}
+
+body.dark-mode-active .quest-hintbox {
+    background: #3A2A12;
+    color: #FFD9A0;
+}
+
+body.dark-mode-active .quest-toast {
+    background: #2A2A2A;
+    border: 1px solid #414141;
+}
+
+body.dark-mode-active .quest-rank {
+    background: #3A2F12;
+    color: #FFD98A;
+}
+
+body.dark-mode-active .quest-badge {
+    background: #3A2F12;
+    border-color: #7A5B1A;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 700px) {
+    .quest-toast-wrap {
+        top: 70px;
+        right: 12px;
+    }
+
+    .quest-mascot-face {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
+        font-size: 24px;
+    }
+
+    .quest-mascot-bubble {
+        font-size: 13px;
+    }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .quest-rocket {
+        transition: none;
+    }
+
+    .quest-mascot-face.bounce,
+    .quest-hintbox,
+    .quest-option.is-correct,
+    .quest-toast,
+    .quest-burst span,
+    .quest-badge {
+        animation: none;
+    }
+}
