@@ -1,14 +1,8 @@
-
 <?php
-if (headers_sent($file, $line)) {
-    die("Output started in $file on line $line");
-}
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+ob_start();
 
 require_once __DIR__ . '/db_connect.php';
-require_once "student_auth.php";
+require_once __DIR__ . '/student_auth.php';
 
 $conn->set_charset("utf8mb4");
 
