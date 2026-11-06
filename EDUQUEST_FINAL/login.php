@@ -2,7 +2,7 @@
 <?php
 session_start();
 
-require_once "Admin_Portal/db_connect.php";
+require_once __DIR__ . 'db_connect.php';
 
 $error = "";
 $success = "";
