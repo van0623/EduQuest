@@ -3,6 +3,7 @@
 session_start();
 
 require_once __DIR__ . '/Admin_Portal/db_connect.php';
+require_once __DIR__ . '/init.php';
 
 $conn->set_charset("utf8mb4");
 
