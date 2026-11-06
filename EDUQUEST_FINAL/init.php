@@ -178,29 +178,33 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
 
     $handler = new EduQuestSessionHandler($conn);
+echo "<pre>";
 
-    // Register the database session handler
-    $registered = session_set_save_handler($handler, true);
+echo "PHP VERSION: " . PHP_VERSION . "\n";
+echo "SESSION STATUS: " . session_status() . "\n";
+echo "SESSION MODULE: " . session_module_name() . "\n";
+echo "SESSION SAVE HANDLER: " . ini_get("session.save_handler") . "\n";
+echo "SESSION AUTO START: " . ini_get("session.auto_start") . "\n";
+echo "HEADERS SENT: " . (headers_sent() ? "YES" : "NO") . "\n";
+echo "SESSION FUNCTION EXISTS: " .
+     (function_exists("session_set_save_handler") ? "YES" : "NO") . "\n";
 
-    if (!$registered) {
+echo "</pre>";
 
-        $lastError = error_get_last();
+$registered = session_set_save_handler($handler, true);
 
-        error_log(
-            "EDUQUEST SESSION REGISTRATION FAILED: " .
-            "PHP VERSION: " . PHP_VERSION .
-            " | SESSION STATUS: " . session_status() .
-            " | SESSION MODULE: " . session_module_name() .
-            " | HEADERS SENT: " . (headers_sent() ? "YES" : "NO") .
-            " | LAST ERROR: " . ($lastError["message"] ?? "No PHP error recorded")
-        );
+if (!$registered) {
+    echo "<pre>";
+    echo "SESSION HANDLER REGISTRATION FAILED\n";
 
-        die("Session handler registration failed. Check Vercel logs.");
-    }
+    $lastError = error_get_last();
 
-    // Start the session
-    if (!session_start()) {
-        error_log("EDUQUEST SESSION START FAILED.");
-        die("Unable to start database session.");
-    }
-}   
+    print_r($lastError);
+
+    echo "</pre>";
+    exit();
+}
+
+if (!session_start()) {
+    die("Unable to start database session.");
+}
