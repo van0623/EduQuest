@@ -14,6 +14,14 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 }
 
 echo "CHECK 3: Database connection is working.<br>";
+
+echo "CHECK 4: Reached user validation.<br>";
+echo "SESSION USER ID: ";
+var_dump($_SESSION['user_id'] ?? 'NOT SET');
+echo "<br>CHECK 5: User query executed.<br>";
+var_dump($user);
+echo "<br>CHECK 6: Courses query executed.<br>";
+echo "COURSES FOUND: " . count($courses) . "<br>";
 /* =========================================================
    HELPER
 ========================================================= */
