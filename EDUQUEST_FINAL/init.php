@@ -260,11 +260,65 @@ if (session_status() === PHP_SESSION_NONE) {
         die("Unable to configure database session handler.");
     }
 
-    /* START SESSION */
 
+/* =========================================================
+   START DATABASE SESSION
+========================================================= */
+
+if (session_status() === PHP_SESSION_NONE) {
+
+    // Detect HTTPS
+    $isHttps = (
+        (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") ||
+        (
+            isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) &&
+            strtolower($_SERVER["HTTP_X_FORWARDED_PROTO"]) === "https"
+        )
+    );
+
+    // Set session name
+    session_name("EDUQUESTSESSID");
+
+    // Configure session cookies
+    try {
+
+        session_set_cookie_params([
+            "lifetime" => 0,
+            "path" => "/",
+            "secure" => $isHttps,
+            "httponly" => true,
+            "samesite" => "Lax"
+        ]);
+
+    } catch (Throwable $e) {
+
+        error_log(
+            "EduQuest session cookie configuration failed: " .
+            $e->getMessage()
+        );
+
+        die("Unable to configure session cookies.");
+    }
+
+    // Create database session handler
+    $handler = new EduQuestSessionHandler($conn);
+
+    // Register database session handler
+    if (!session_set_save_handler($handler, true)) {
+
+        error_log(
+            "EduQuest session handler registration failed. " .
+            "Session status: " . session_status() .
+            " | Headers sent: " . (headers_sent() ? "YES" : "NO")
+        );
+
+        die("Unable to configure database session handler.");
+    }
+
+    // Start session
     if (!session_start()) {
 
-        error_log("EduQuest: Unable to start database session.");
+        error_log("EduQuest database session could not be started.");
 
         die("Unable to start database session.");
     }
