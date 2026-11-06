@@ -91,12 +91,7 @@ class EduQuestSessionHandler implements SessionHandlerInterface
             return false;
         }
 
-        $stmt->bind_param(
-            "ssi",
-            $id,
-            $data,
-            $lastActivity
-        );
+        $stmt->bind_param("ssi", $id, $data, $lastActivity);
 
         $success = $stmt->execute();
 
@@ -145,6 +140,7 @@ class EduQuestSessionHandler implements SessionHandlerInterface
         $stmt->bind_param("i", $expiredBefore);
 
         $success = $stmt->execute();
+
         $deleted = $success ? $stmt->affected_rows : false;
 
         $stmt->close();
@@ -178,33 +174,41 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
 
     $handler = new EduQuestSessionHandler($conn);
-echo "<pre>";
 
-echo "PHP VERSION: " . PHP_VERSION . "\n";
-echo "SESSION STATUS: " . session_status() . "\n";
-echo "SESSION MODULE: " . session_module_name() . "\n";
-echo "SESSION SAVE HANDLER: " . ini_get("session.save_handler") . "\n";
-echo "SESSION AUTO START: " . ini_get("session.auto_start") . "\n";
-echo "HEADERS SENT: " . (headers_sent() ? "YES" : "NO") . "\n";
-echo "SESSION FUNCTION EXISTS: " .
-     (function_exists("session_set_save_handler") ? "YES" : "NO") . "\n";
-
-echo "</pre>";
-
-$registered = session_set_save_handler($handler, true);
-
-if (!$registered) {
+    // TEMPORARY DIAGNOSTICS
     echo "<pre>";
-    echo "SESSION HANDLER REGISTRATION FAILED\n";
 
-    $lastError = error_get_last();
-
-    print_r($lastError);
+    echo "PHP VERSION: " . PHP_VERSION . "\n";
+    echo "SESSION STATUS: " . session_status() . "\n";
+    echo "SESSION MODULE: " . session_module_name() . "\n";
+    echo "SESSION SAVE HANDLER: " . ini_get("session.save_handler") . "\n";
+    echo "SESSION AUTO START: " . ini_get("session.auto_start") . "\n";
+    echo "HEADERS SENT: " . (headers_sent() ? "YES" : "NO") . "\n";
+    echo "SESSION FUNCTION EXISTS: " .
+         (function_exists("session_set_save_handler") ? "YES" : "NO") . "\n";
 
     echo "</pre>";
-    exit();
-}
 
-if (!session_start()) {
-    die("Unable to start database session.");
+    // REGISTER SESSION HANDLER
+    $registered = session_set_save_handler($handler, true);
+
+    if (!$registered) {
+
+        echo "<pre>";
+        echo "SESSION HANDLER REGISTRATION FAILED\n";
+
+        $lastError = error_get_last();
+
+        print_r($lastError);
+
+        echo "</pre>";
+
+        exit();
+    }
+
+    // START SESSION
+    if (!session_start()) {
+        die("Unable to start database session.");
+    }
+
 }
