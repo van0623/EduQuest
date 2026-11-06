@@ -1,62 +1,26 @@
 
 <?php
 
-// require_once __DIR__ . '/init.php';
-
-// $conn->set_charset("utf8mb4");
-
-/* =========================================================
-   ERROR REPORTING - DEVELOPMENT ONLY
-========================================================= */
-
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-ini_set('log_errors', '1');
-
 /* =========================================================
    INITIALIZATION
 ========================================================= */
 
 require_once __DIR__ . '/init.php';
 
-/* =========================================================
-   DATABASE CONNECTION VALIDATION
-========================================================= */
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-ini_set('log_errors', '1');
-
-register_shutdown_function(function () {
-
-    $error = error_get_last();
-
-    if ($error !== null) {
-
-        echo "<div style='background:#ffe5e5;color:#900;padding:20px;margin:20px;font-family:Arial;'>";
-        echo "<h2>PHP Fatal Error Detected</h2>";
-        echo "<strong>Message:</strong> " . htmlspecialchars($error['message']);
-        echo "<br><strong>File:</strong> " . htmlspecialchars($error['file']);
-        echo "<br><strong>Line:</strong> " . $error['line'];
-        echo "</div>";
-
-    }
-});
-
-echo "CHECK 1: CoursePage.php is executing.<br>";
-
-require_once __DIR__ . '/init.php';
-
-echo "CHECK 2: init.php loaded successfully.<br>";
-
-if (!isset($conn)) {
-    die("ERROR: Database connection is missing.");
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    die("Database connection is not available.");
 }
 
 $conn->set_charset("utf8mb4");
 
-echo "CHECK 3: Database connection is working.<br>";
+/* =========================================================
+   HELPER
+========================================================= */
+
+function coursePageEscape($value): string
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
 
 /* =========================================================
    GET LOGGED-IN STUDENT OR ADMIN
@@ -124,7 +88,12 @@ if (!empty($_SESSION['user_id'])) {
             die("Unable to load your account.");
         }
 
-        $stmt->bind_param("ss", $loginIdentifier, $loginIdentifier);
+        $stmt->bind_param(
+            "ss",
+            $loginIdentifier,
+            $loginIdentifier
+        );
+
         $stmt->execute();
 
         $user = $stmt->get_result()->fetch_assoc();
@@ -132,13 +101,19 @@ if (!empty($_SESSION['user_id'])) {
         $stmt->close();
 
         if ($user) {
+
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
+
         }
     }
 }
+
+/* =========================================================
+   VALIDATE ACCOUNT BEFORE DISPLAYING HTML
+========================================================= */
 
 if (!$user) {
     header("Location: login.php");
@@ -153,7 +128,9 @@ $displayName = !empty($user['username'])
 
 $username = coursePageEscape($displayName);
 
-$firstLetter = strtoupper(substr($displayName, 0, 1));
+$firstLetter = strtoupper(
+    substr($displayName ?: 'U', 0, 1)
+);
 
 $userRole = $user['role'];
 
@@ -161,7 +138,9 @@ $userRole = $user['role'];
    PROFILE IMAGE
 ========================================================= */
 
-$profileImage = trim((string) ($user['profile_image'] ?? ''));
+$profileImage = trim(
+    (string) ($user['profile_image'] ?? '')
+);
 
 if (!empty($profileImage)) {
 
@@ -174,8 +153,15 @@ if (!empty($profileImage)) {
 
         $profileImage = ltrim($profileImage, "/");
 
-        if (strpos($profileImage, "uploads/profile_images/") === 0) {
+        if (
+            strpos(
+                $profileImage,
+                "uploads/profile_images/"
+            ) === 0
+        ) {
+
             $profileImage = "Admin_Portal/" . $profileImage;
+
         }
     }
 }
@@ -228,7 +214,9 @@ $sql = "
         c.course_number,
         c.is_locked
 
-    ORDER BY c.course_number ASC, c.course_id ASC
+    ORDER BY
+        c.course_number ASC,
+        c.course_id ASC
 ";
 
 $stmt = $conn->prepare($sql);
@@ -239,27 +227,40 @@ if (!$stmt) {
 }
 
 $stmt->bind_param("i", $userId);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    error_log("CoursePage course execution error: " . $stmt->error);
+    die("Unable to retrieve courses.");
+}
 
 $result = $stmt->get_result();
 
 while ($row = $result->fetch_assoc()) {
 
     $totalModules = (int) $row['total_modules'];
+
     $totalLessons = (int) $row['total_lessons'];
+
     $completedLessons = (int) $row['completed_lessons'];
 
     $progress = 0;
 
     if ($totalLessons > 0) {
-        $progress = ($completedLessons / $totalLessons) * 100;
+
+        $progress = (
+            $completedLessons / $totalLessons
+        ) * 100;
+
     }
 
     $progress = max(0, min(100, $progress));
 
     $row['total_modules'] = $totalModules;
+
     $row['total_lessons'] = $totalLessons;
+
     $row['completed_lessons'] = $completedLessons;
+
     $row['progress_percent'] = round($progress, 2);
 
     $row['course_completed'] = (
@@ -268,12 +269,15 @@ while ($row = $result->fetch_assoc()) {
     );
 
     $courses[] = $row;
+
 }
 
 $stmt->close();
 
 /* =========================================================
    DETERMINE COURSE UNLOCKING
+   First course is unlocked.
+   Next course unlocks after previous completion.
 ========================================================= */
 
 $previousCourseCompleted = true;
@@ -284,12 +288,14 @@ foreach ($courses as $index => $course) {
 
     $courses[$index]['display_locked'] = $isLocked;
 
-    $previousCourseCompleted = (bool) $course['course_completed'];
+    $previousCourseCompleted = (
+        bool
+    ) $course['course_completed'];
+
 }
 
 /* =========================================================
    FETCH UNREAD NOTIFICATIONS
-   Actual schema does not contain an audience column.
 ========================================================= */
 
 $unreadNotifications = 0;
@@ -304,29 +310,47 @@ $stmt = $conn->prepare("
 if ($stmt) {
 
     $stmt->bind_param("i", $userId);
-    $stmt->execute();
 
-    $notificationCount = $stmt->get_result()->fetch_assoc();
+    if ($stmt->execute()) {
 
-    $unreadNotifications = (int) ($notificationCount['total'] ?? 0);
+        $notificationCount = $stmt->get_result()->fetch_assoc();
+
+        $unreadNotifications = (int) (
+            $notificationCount['total'] ?? 0
+        );
+
+    } else {
+
+        error_log(
+            "CoursePage notification count execution error: "
+            . $stmt->error
+        );
+
+    }
 
     $stmt->close();
 
 } else {
-    error_log("CoursePage notification count error: " . $conn->error);
+
+    error_log(
+        "CoursePage notification count error: "
+        . $conn->error
+    );
+
 }
 
 /* =========================================================
    FETCH LATEST NOTIFICATIONS
+
+   Uses actual notification columns:
+   message, is_read, created_at
 ========================================================= */
 
 $notifications = [];
 
 $stmt = $conn->prepare("
     SELECT
-        title AS notification_title,
         message AS notification_message,
-        notification_type,
         is_read,
         created_at
     FROM notifications
@@ -339,27 +363,46 @@ $stmt = $conn->prepare("
 if ($stmt) {
 
     $stmt->bind_param("i", $userId);
-    $stmt->execute();
 
-    $result = $stmt->get_result();
+    if ($stmt->execute()) {
 
-    while ($row = $result->fetch_assoc()) {
-        $notifications[] = $row;
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+
+            $notifications[] = $row;
+
+        }
+
+    } else {
+
+        error_log(
+            "CoursePage notification list execution error: "
+            . $stmt->error
+        );
+
     }
 
     $stmt->close();
 
 } else {
-    error_log("CoursePage notification list error: " . $conn->error);
-}
-?>
 
+    error_log(
+        "CoursePage notification list error: "
+        . $conn->error
+    );
+
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>EduQuest - Courses</title>
@@ -367,11 +410,14 @@ if ($stmt) {
     <link
         rel="stylesheet"
         href="css/Course_style.css?v=<?php
-            echo filemtime(__DIR__ . '/css/Course_style.css');
+            echo is_file(__DIR__ . '/css/Course_style.css')
+                ? filemtime(__DIR__ . '/css/Course_style.css')
+                : '1';
         ?>"
     >
 
     <style>
+
         .profile-picture img {
             width: 100%;
             height: 100%;
@@ -379,7 +425,9 @@ if ($stmt) {
             object-fit: cover;
             border-radius: 50%;
         }
+
     </style>
+
 </head>
 
 <body>
@@ -387,6 +435,7 @@ if ($stmt) {
 <div class="dashboard">
 
     <!-- SIDEBAR -->
+
     <aside class="sidebar">
 
         <div class="logo">
@@ -444,19 +493,25 @@ if ($stmt) {
     </aside>
 
     <!-- MAIN CONTENT -->
+
     <main class="main-content">
 
         <!-- TOP BAR -->
+
         <header class="topbar">
 
             <div>
+
                 <h1>Courses</h1>
+
                 <p>Explore your learning missions.</p>
+
             </div>
 
             <div class="profile">
 
                 <!-- NOTIFICATIONS -->
+
                 <div class="notification-container">
 
                     <button
@@ -466,12 +521,17 @@ if ($stmt) {
                         aria-label="Notifications"
                         aria-expanded="false"
                     >
+
                         🔔
 
                         <?php if ($unreadNotifications > 0): ?>
+
                             <span class="notification-badge">
+
                                 <?php echo $unreadNotifications; ?>
+
                             </span>
+
                         <?php endif; ?>
 
                     </button>
@@ -482,16 +542,25 @@ if ($stmt) {
                     >
 
                         <div class="notification-header">
+
                             <h3>Notifications</h3>
-                            <span><?php echo $unreadNotifications; ?> New</span>
+
+                            <span>
+                                <?php echo $unreadNotifications; ?> New
+                            </span>
+
                         </div>
 
                         <?php if (empty($notifications)): ?>
 
                             <div class="notification-item">
+
                                 <div class="notification-content">
+
                                     <p>No notifications available.</p>
+
                                 </div>
+
                             </div>
 
                         <?php else: ?>
@@ -500,26 +569,28 @@ if ($stmt) {
 
                                 <div class="notification-item">
 
-                                    <div class="notification-icon">📢</div>
+                                    <div class="notification-icon">
+                                        📢
+                                    </div>
 
                                     <div class="notification-content">
 
-                                        <strong>
-                                            <?php echo coursePageEscape(
-                                                $note['notification_title']
-                                            ); ?>
-                                        </strong>
+                                        <strong>Notification</strong>
 
                                         <p>
-                                            <?php echo coursePageEscape(
+                                            <?php
+                                            echo coursePageEscape(
                                                 $note['notification_message']
-                                            ); ?>
+                                            );
+                                            ?>
                                         </p>
 
                                         <small>
-                                            <?php echo coursePageEscape(
+                                            <?php
+                                            echo coursePageEscape(
                                                 $note['created_at']
-                                            ); ?>
+                                            );
+                                            ?>
                                         </small>
 
                                     </div>
@@ -531,9 +602,11 @@ if ($stmt) {
                         <?php endif; ?>
 
                         <div class="notification-footer">
+
                             <a href="NotificationPage.php">
                                 View All Notifications
                             </a>
+
                         </div>
 
                     </div>
@@ -541,6 +614,7 @@ if ($stmt) {
                 </div>
 
                 <!-- DARK MODE -->
+
                 <button
                     type="button"
                     class="dark-mode"
@@ -551,6 +625,7 @@ if ($stmt) {
                 </button>
 
                 <!-- PROFILE -->
+
                 <div class="profile-info">
 
                     <div class="profile-picture">
@@ -560,7 +635,8 @@ if ($stmt) {
                             <img
                                 src="<?php echo coursePageEscape($profileImage); ?>"
                                 alt="Profile Picture"
-                                onerror="this.style.display='none'; this.parentElement.textContent='<?php echo coursePageEscape($firstLetter); ?>';">
+                                onerror="this.style.display='none'; this.parentElement.textContent='<?php echo coursePageEscape($firstLetter); ?>';"
+                            >
 
                         <?php else: ?>
 
@@ -571,8 +647,19 @@ if ($stmt) {
                     </div>
 
                     <div>
-                        <strong><?php echo $username; ?></strong>
-                        <small><?php echo coursePageEscape(ucfirst($userRole)); ?></small>
+
+                        <strong>
+                            <?php echo $username; ?>
+                        </strong>
+
+                        <small>
+                            <?php
+                            echo coursePageEscape(
+                                ucfirst($userRole)
+                            );
+                            ?>
+                        </small>
+
                     </div>
 
                 </div>
@@ -582,6 +669,7 @@ if ($stmt) {
         </header>
 
         <!-- COURSE LIST -->
+
         <section class="course-page">
 
             <div class="page-heading">
@@ -601,6 +689,7 @@ if ($stmt) {
                     <?php foreach ($courses as $course): ?>
 
                         <?php
+
                         $courseId = (int) $course['course_id'];
 
                         $courseTitle = coursePageEscape(
@@ -620,6 +709,7 @@ if ($stmt) {
                         $progress = (float) $course['progress_percent'];
 
                         $isLocked = (bool) $course['display_locked'];
+
                         ?>
 
                         <div class="course-card <?php
@@ -627,6 +717,7 @@ if ($stmt) {
                         ?>">
 
                             <div class="course-number">
+
                                 COURSE <?php
                                     echo str_pad(
                                         (string) $courseNumber,
@@ -635,16 +726,25 @@ if ($stmt) {
                                         STR_PAD_LEFT
                                     );
                                 ?>
+
                             </div>
 
-                            <h3><?php echo $courseTitle; ?></h3>
+                            <h3>
+                                <?php echo $courseTitle; ?>
+                            </h3>
 
-                            <p><?php echo $courseDescription; ?></p>
+                            <p>
+                                <?php echo $courseDescription; ?>
+                            </p>
 
                             <?php if ($isLocked): ?>
 
+                                <!-- LOCKED COURSE -->
+
                                 <div class="locked-text">
+
                                     🔒 Complete the previous course to unlock this course.
+
                                 </div>
 
                                 <div class="course-info">
@@ -671,6 +771,8 @@ if ($stmt) {
                                 </div>
 
                             <?php else: ?>
+
+                                <!-- UNLOCKED COURSE -->
 
                                 <div class="course-info">
 
@@ -707,7 +809,9 @@ if ($stmt) {
                                 <div class="course-bottom">
 
                                     <strong>
-                                        <?php echo (int) round($progress); ?>%
+                                        <?php
+                                        echo (int) round($progress);
+                                        ?>%
                                     </strong>
 
                                     <a href="LessonPage.php?course_id=<?php
@@ -738,14 +842,33 @@ if ($stmt) {
 
 </div>
 
+<!-- JAVASCRIPT -->
+
 <script>
+
+    /* =====================================================
+       DARK MODE
+    ===================================================== */
+
     function toggleDarkMode() {
+
         document.body.classList.toggle("dark-mode-active");
+
     }
 
+    /* =====================================================
+       NOTIFICATIONS DROPDOWN
+    ===================================================== */
+
     function toggleNotifications() {
-        const dropdown = document.getElementById("notificationDropdown");
-        const button = document.querySelector(".notification-btn");
+
+        const dropdown = document.getElementById(
+            "notificationDropdown"
+        );
+
+        const button = document.querySelector(
+            ".notification-btn"
+        );
 
         if (!dropdown || !button) {
             return;
@@ -753,26 +876,52 @@ if ($stmt) {
 
         const isOpen = dropdown.classList.toggle("show");
 
-        button.setAttribute("aria-expanded", String(isOpen));
+        button.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+        );
+
     }
 
+    /* =====================================================
+       CLOSE NOTIFICATIONS WHEN CLICKING OUTSIDE
+    ===================================================== */
+
     document.addEventListener("click", function(event) {
-        const container = document.querySelector(".notification-container");
-        const dropdown = document.getElementById("notificationDropdown");
-        const button = document.querySelector(".notification-btn");
+
+        const container = document.querySelector(
+            ".notification-container"
+        );
+
+        const dropdown = document.getElementById(
+            "notificationDropdown"
+        );
+
+        const button = document.querySelector(
+            ".notification-btn"
+        );
 
         if (
             container &&
             dropdown &&
             !container.contains(event.target)
         ) {
+
             dropdown.classList.remove("show");
 
             if (button) {
-                button.setAttribute("aria-expanded", "false");
+
+                button.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
             }
+
         }
+
     });
+
 </script>
 
 </body>
