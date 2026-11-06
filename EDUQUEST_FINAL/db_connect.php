@@ -2,100 +2,54 @@
 
 mysqli_report(MYSQLI_REPORT_OFF);
 
-/*
-|--------------------------------------------------------------------------
-| Database Configuration
-|--------------------------------------------------------------------------
-*/
+$host = getenv('DB_HOST');
+$username = getenv('DB_USER');
+$password = getenv('DB_PASSWORD');
+$database = getenv('DB_NAME');
+$port = (int) (getenv('DB_PORT') ?: 4000);
+$sslCa = getenv('DB_SSL_CA');
 
-$host = getenv('DB_HOST') ?: 'localhost';
-$username = getenv('DB_USER') ?: 'root';
-$password = getenv('DB_PASSWORD') ?: '';
-$database = getenv('DB_NAME') ?: 'eduquest_db';
+if (
+    !$host ||
+    !$username ||
+    !$password ||
+    !$database ||
+    !$sslCa
+) {
+    error_log("EduQuest DB Error: One or more environment variables are missing.");
+    die("Database configuration is incomplete. Check Vercel environment variables.");
+}
 
-$port = (int) (getenv('DB_PORT') ?: 3306);
-
-$sslCa = getenv('DB_SSL_CA') ?: '';
-
-/*
-|--------------------------------------------------------------------------
-| Initialize Database Connection
-|--------------------------------------------------------------------------
-*/
+if (!file_exists($sslCa)) {
+    error_log("EduQuest DB Error: SSL certificate not found at " . $sslCa);
+    die("Database SSL certificate is missing.");
+}
 
 $conn = mysqli_init();
 
-if (!$conn) {
-    die("Database connection failed.");
-}
+$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 15);
 
-/*
-|--------------------------------------------------------------------------
-| TiDB Cloud SSL Connection
-|--------------------------------------------------------------------------
-*/
+$conn->ssl_set(
+    null,
+    null,
+    $sslCa,
+    null,
+    null
+);
 
-if ($host !== 'localhost' && $host !== '127.0.0.1') {
-
-    if (empty($sslCa) || !file_exists($sslCa)) {
-        error_log("Database SSL certificate is missing.");
-        die("Database connection failed.");
-    }
-
-    $conn->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
-
-    $conn->ssl_set(
-        null,
-        null,
-        $sslCa,
-        null,
-        null
-    );
-
-    $connected = $conn->real_connect(
-        $host,
-        $username,
-        $password,
-        $database,
-        $port,
-        null,
-        MYSQLI_CLIENT_SSL
-    );
-
-} else {
-
-    /*
-    |--------------------------------------------------------------------------
-    | Local XAMPP Connection
-    |--------------------------------------------------------------------------
-    */
-
-    $connected = $conn->real_connect(
-        $host,
-        $username,
-        $password,
-        $database,
-        $port
-    );
-}
-
-/*
-|--------------------------------------------------------------------------
-| Check Connection
-|--------------------------------------------------------------------------
-*/
+$connected = $conn->real_connect(
+    $host,
+    $username,
+    $password,
+    $database,
+    $port,
+    null,
+    MYSQLI_CLIENT_SSL
+);
 
 if (!$connected) {
-    error_log("Database connection error: " . $conn->connect_error);
-    die("Database connection failed.");
+    error_log("EduQuest TiDB Connection Error: " . $conn->connect_error);
+    die("Database connection failed. Please check the deployment logs.");
 }
 
-/*
-|--------------------------------------------------------------------------
-| Set Character Encoding
-|--------------------------------------------------------------------------
-*/
-
 $conn->set_charset("utf8mb4");
-
-?>
