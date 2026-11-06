@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
 mysqli_report(MYSQLI_REPORT_OFF);
 
 $host = getenv('DB_HOST');

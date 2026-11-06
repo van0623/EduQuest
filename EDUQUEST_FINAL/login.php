@@ -1,9 +1,10 @@
-
 <?php
+if (headers_sent($file, $line)) {
+    die("Output started in $file on line $line");
+}
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 require_once __DIR__ . '/db_connect.php';
 
 $error = "";
