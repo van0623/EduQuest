@@ -1,27 +1,8 @@
 <?php
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
-
-echo "CHECK 1: CoursePage.php is running.<br>";
 
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/student_auth.php';
 
-echo "CHECK 2: init.php loaded.<br>";
-
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    die("ERROR: Database connection is not available.");
-}
-
-echo "CHECK 3: Database connection is working.<br>";
-
-echo "CHECK 4: Reached user validation.<br>";
-echo "SESSION USER ID: ";
-var_dump($_SESSION['user_id'] ?? 'NOT SET');
-echo "<br>CHECK 5: User query executed.<br>";
-var_dump($user);
-echo "<br>CHECK 6: Courses query executed.<br>";
-echo "COURSES FOUND: " . count($courses) . "<br>";
 /* =========================================================
    HELPER
 ========================================================= */
