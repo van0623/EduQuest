@@ -1,21 +1,19 @@
-
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
-/* =========================================================
-   INITIALIZATION
-========================================================= */
+echo "CHECK 1: CoursePage.php is running.<br>";
 
-ob_start();
+require_once __DIR__ . '/init.php';
 
-require_once __DIR__ . '/db_connect.php';
-require_once __DIR__ . '/student_auth.php';
+echo "CHECK 2: init.php loaded.<br>";
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
-    die("Database connection is not available.");
+    die("ERROR: Database connection is not available.");
 }
 
-$conn->set_charset("utf8mb4");
-
+echo "CHECK 3: Database connection is working.<br>";
 /* =========================================================
    HELPER
 ========================================================= */
