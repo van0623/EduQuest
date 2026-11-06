@@ -1,8 +1,10 @@
 
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once __DIR__ . '/Admin_Portal/db_connect.php';
+require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/init.php';
 
 $conn->set_charset("utf8mb4");
@@ -11,7 +13,8 @@ $conn->set_charset("utf8mb4");
    HELPER
 ========================================================= */
 
-function coursePageEscape($value): string {
+function coursePageEscape($value): string
+{
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
@@ -22,16 +25,28 @@ function coursePageEscape($value): string {
 $user = null;
 
 if (!empty($_SESSION['user_id'])) {
+
     $sessionUserId = (int) $_SESSION['user_id'];
 
     $stmt = $conn->prepare("
-        SELECT user_id, full_name, username, email, profile_image, role
+        SELECT
+            user_id,
+            full_name,
+            username,
+            email,
+            profile_image,
+            role
         FROM users
         WHERE user_id = ?
           AND role IN ('student', 'admin')
           AND account_status = 'active'
         LIMIT 1
     ");
+
+    if (!$stmt) {
+        error_log("CoursePage user query error: " . $conn->error);
+        die("Unable to load your account.");
+    }
 
     $stmt->bind_param("i", $sessionUserId);
     $stmt->execute();
@@ -41,20 +56,33 @@ if (!empty($_SESSION['user_id'])) {
     $stmt->close();
 
 } else {
+
     $loginIdentifier = $_SESSION['email']
         ?? $_SESSION['user_email']
         ?? $_SESSION['username']
         ?? null;
 
     if ($loginIdentifier !== null) {
+
         $stmt = $conn->prepare("
-            SELECT user_id, full_name, username, email, profile_image, role
+            SELECT
+                user_id,
+                full_name,
+                username,
+                email,
+                profile_image,
+                role
             FROM users
             WHERE (email = ? OR username = ?)
               AND role IN ('student', 'admin')
               AND account_status = 'active'
             LIMIT 1
         ");
+
+        if (!$stmt) {
+            error_log("CoursePage user lookup error: " . $conn->error);
+            die("Unable to load your account.");
+        }
 
         $stmt->bind_param("ss", $loginIdentifier, $loginIdentifier);
         $stmt->execute();
@@ -89,44 +117,44 @@ $firstLetter = strtoupper(substr($displayName, 0, 1));
 
 $userRole = $user['role'];
 
-/* =============================
-   PROFILE IMAGE PATH
-============================= */
+/* =========================================================
+   PROFILE IMAGE
+========================================================= */
 
-$profileImage = trim((string) ($user["profile_image"] ?? ""));
+$profileImage = trim((string) ($user['profile_image'] ?? ''));
 
 if (!empty($profileImage)) {
 
-    // Convert Windows directory separators to URL separators.
     $profileImage = str_replace("\\", "/", $profileImage);
 
-    // Keep external image URLs and data URLs unchanged.
     if (
         !preg_match('/^https?:\/\//i', $profileImage) &&
         strpos($profileImage, "data:") !== 0
     ) {
-        // Remove leading slashes.
+
         $profileImage = ltrim($profileImage, "/");
 
-        // Only admin profile images need the Admin_Portal prefix.
         if (strpos($profileImage, "uploads/profile_images/") === 0) {
             $profileImage = "Admin_Portal/" . $profileImage;
         }
     }
 }
+
 /* =========================================================
-   FETCH COURSES AND LESSON PROGRESS
+   FETCH ALL PUBLISHED COURSES AND LESSON PROGRESS
 ========================================================= */
 
 $courses = [];
 
-$stmt = $conn->prepare("
+$sql = "
     SELECT
         c.course_id,
         c.course_title,
         c.course_description,
         c.course_number,
         c.is_locked,
+
+        COUNT(DISTINCT mo.module_id) AS total_modules,
 
         COUNT(DISTINCT l.lesson_id) AS total_lessons,
 
@@ -152,7 +180,6 @@ $stmt = $conn->prepare("
        AND ulp.user_id = ?
 
     WHERE c.status = 'published'
-      AND c.course_number IN (1, 2, 3)
 
     GROUP BY
         c.course_id,
@@ -161,8 +188,15 @@ $stmt = $conn->prepare("
         c.course_number,
         c.is_locked
 
-    ORDER BY c.course_number ASC
-");
+    ORDER BY c.course_number ASC, c.course_id ASC
+";
+
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    error_log("CoursePage course query error: " . $conn->error);
+    die("Unable to load courses. Please check the deployment logs.");
+}
 
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -170,12 +204,11 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 while ($row = $result->fetch_assoc()) {
+
+    $totalModules = (int) $row['total_modules'];
     $totalLessons = (int) $row['total_lessons'];
     $completedLessons = (int) $row['completed_lessons'];
 
-    /*
-     * Calculate progress exactly as DashboardPage.php does.
-     */
     $progress = 0;
 
     if ($totalLessons > 0) {
@@ -184,17 +217,14 @@ while ($row = $result->fetch_assoc()) {
 
     $progress = max(0, min(100, $progress));
 
+    $row['total_modules'] = $totalModules;
     $row['total_lessons'] = $totalLessons;
     $row['completed_lessons'] = $completedLessons;
     $row['progress_percent'] = round($progress, 2);
 
-    /*
-     * A course is complete only when it has at least one
-     * published lesson and all published lessons are completed.
-     */
     $row['course_completed'] = (
-        $totalLessons > 0
-        && $completedLessons >= $totalLessons
+        $totalLessons > 0 &&
+        $completedLessons >= $totalLessons
     );
 
     $courses[] = $row;
@@ -203,25 +233,23 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 /* =========================================================
-   DETERMINE UNLOCKED COURSES
+   DETERMINE COURSE UNLOCKING
 ========================================================= */
 
 $previousCourseCompleted = true;
 
 foreach ($courses as $index => $course) {
+
     $isLocked = !$previousCourseCompleted;
 
     $courses[$index]['display_locked'] = $isLocked;
 
-    /*
-     * The completion state of the current course determines
-     * whether the next course will be unlocked.
-     */
     $previousCourseCompleted = (bool) $course['course_completed'];
 }
 
 /* =========================================================
    FETCH UNREAD NOTIFICATIONS
+   Actual schema does not contain an audience column.
 ========================================================= */
 
 $unreadNotifications = 0;
@@ -229,15 +257,12 @@ $unreadNotifications = 0;
 $stmt = $conn->prepare("
     SELECT COUNT(*) AS total
     FROM notifications
-    WHERE (
-        user_id = ?
-        OR audience = 'All students'
-        OR user_id IS NULL
-    )
+    WHERE (user_id = ? OR user_id IS NULL)
       AND is_read = 0
 ");
 
 if ($stmt) {
+
     $stmt->bind_param("i", $userId);
     $stmt->execute();
 
@@ -246,6 +271,9 @@ if ($stmt) {
     $unreadNotifications = (int) ($notificationCount['total'] ?? 0);
 
     $stmt->close();
+
+} else {
+    error_log("CoursePage notification count error: " . $conn->error);
 }
 
 /* =========================================================
@@ -258,19 +286,18 @@ $stmt = $conn->prepare("
     SELECT
         title AS notification_title,
         message AS notification_message,
+        notification_type,
         is_read,
         created_at
     FROM notifications
-    WHERE (
-        user_id = ?
-        OR audience = 'All students'
-        OR user_id IS NULL
-    )
+    WHERE user_id = ?
+       OR user_id IS NULL
     ORDER BY created_at DESC
     LIMIT 5
 ");
 
 if ($stmt) {
+
     $stmt->bind_param("i", $userId);
     $stmt->execute();
 
@@ -281,8 +308,12 @@ if ($stmt) {
     }
 
     $stmt->close();
+
+} else {
+    error_log("CoursePage notification list error: " . $conn->error);
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
