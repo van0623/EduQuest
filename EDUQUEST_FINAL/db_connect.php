@@ -52,7 +52,7 @@ $connected = $conn->real_connect(
 
 if (!$connected) {
     error_log("EduQuest TiDB Connection Error: " . $conn->connect_error);
-    die("Database connection failed. Please check the deployment logs.");
+    die("DB error: " . $conn->connect_errno . " - " . $conn->connect_error);
 }
 
 $conn->set_charset("utf8mb4");
