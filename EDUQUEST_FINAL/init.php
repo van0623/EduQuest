@@ -172,7 +172,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         "lifetime" => 0,
         "path" => "/",
-        "domain" => "",
         "secure" => $isHttps,
         "httponly" => true,
         "samesite" => "Lax"
@@ -180,11 +179,28 @@ if (session_status() === PHP_SESSION_NONE) {
 
     $handler = new EduQuestSessionHandler($conn);
 
-    if (!session_set_save_handler($handler, true)) {
-        die("Unable to configure database session handler.");
+    // Register the database session handler
+    $registered = session_set_save_handler($handler, true);
+
+    if (!$registered) {
+
+        $lastError = error_get_last();
+
+        error_log(
+            "EDUQUEST SESSION REGISTRATION FAILED: " .
+            "PHP VERSION: " . PHP_VERSION .
+            " | SESSION STATUS: " . session_status() .
+            " | SESSION MODULE: " . session_module_name() .
+            " | HEADERS SENT: " . (headers_sent() ? "YES" : "NO") .
+            " | LAST ERROR: " . ($lastError["message"] ?? "No PHP error recorded")
+        );
+
+        die("Session handler registration failed. Check Vercel logs.");
     }
 
+    // Start the session
     if (!session_start()) {
-        die("Unable to start session.");
+        error_log("EDUQUEST SESSION START FAILED.");
+        die("Unable to start database session.");
     }
-}
+}   
