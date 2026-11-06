@@ -23,26 +23,42 @@ require_once __DIR__ . '/init.php';
 /* =========================================================
    DATABASE CONNECTION VALIDATION
 ========================================================= */
+<?php
 
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    die("Database connection error: \$conn is not initialized in init.php.");
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+ini_set('log_errors', '1');
+
+register_shutdown_function(function () {
+
+    $error = error_get_last();
+
+    if ($error !== null) {
+
+        echo "<div style='background:#ffe5e5;color:#900;padding:20px;margin:20px;font-family:Arial;'>";
+        echo "<h2>PHP Fatal Error Detected</h2>";
+        echo "<strong>Message:</strong> " . htmlspecialchars($error['message']);
+        echo "<br><strong>File:</strong> " . htmlspecialchars($error['file']);
+        echo "<br><strong>Line:</strong> " . $error['line'];
+        echo "</div>";
+
+    }
+});
+
+echo "CHECK 1: CoursePage.php is executing.<br>";
+
+require_once __DIR__ . '/init.php';
+
+echo "CHECK 2: init.php loaded successfully.<br>";
+
+if (!isset($conn)) {
+    die("ERROR: Database connection is missing.");
 }
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+$conn->set_charset("utf8mb4");
 
-if (!$conn->set_charset("utf8mb4")) {
-    die("Unable to configure database charset: " . $conn->error);
-}
-/* =========================================================
-   HELPER
-========================================================= */    
-
-function coursePageEscape($value): string
-{
-    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
-}
+echo "CHECK 3: Database connection is working.<br>";
 
 /* =========================================================
    GET LOGGED-IN STUDENT OR ADMIN
