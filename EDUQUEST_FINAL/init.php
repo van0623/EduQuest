@@ -298,4 +298,3 @@ if (session_status() === PHP_SESSION_NONE) {
         die("Unable to start database session.");
     }
 }
-}
