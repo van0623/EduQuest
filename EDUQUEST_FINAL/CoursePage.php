@@ -276,8 +276,6 @@ $stmt->close();
 
 /* =========================================================
    DETERMINE COURSE UNLOCKING
-   First course is unlocked.
-   Next course unlocks after previous completion.
 ========================================================= */
 
 $previousCourseCompleted = true;
@@ -288,12 +286,8 @@ foreach ($courses as $index => $course) {
 
     $courses[$index]['display_locked'] = $isLocked;
 
-    $previousCourseCompleted = (
-        bool
-    ) $course['course_completed'];
-
+    $previousCourseCompleted = (bool) $course['course_completed'];
 }
-
 /* =========================================================
    FETCH UNREAD NOTIFICATIONS
 ========================================================= */
