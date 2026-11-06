@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/session_handler.php';
 
 if (
     empty($_SESSION["user_id"]) ||
