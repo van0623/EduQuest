@@ -5,7 +5,10 @@
    INITIALIZATION
 ========================================================= */
 
-require_once __DIR__ . '/init.php';
+ob_start();
+
+require_once __DIR__ . '/db_connect.php';
+require_once __DIR__ . '/student_auth.php';
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     die("Database connection is not available.");
