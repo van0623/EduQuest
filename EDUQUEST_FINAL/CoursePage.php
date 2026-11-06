@@ -1,10 +1,42 @@
 
 <?php
 
+// require_once __DIR__ . '/init.php';
+
+// $conn->set_charset("utf8mb4");
+
+<?php
+
+/* =========================================================
+   ERROR REPORTING - DEVELOPMENT ONLY
+========================================================= */
+
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+ini_set('log_errors', '1');
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
 require_once __DIR__ . '/init.php';
 
-$conn->set_charset("utf8mb4");
+/* =========================================================
+   DATABASE CONNECTION VALIDATION
+========================================================= */
 
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    die("Database connection error: \$conn is not initialized in init.php.");
+}
+
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+
+if (!$conn->set_charset("utf8mb4")) {
+    die("Unable to configure database charset: " . $conn->error);
+}
 /* =========================================================
    HELPER
 ========================================================= */    
